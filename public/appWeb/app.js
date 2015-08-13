@@ -11,7 +11,7 @@ angular.module('appWeb', [
   .config(function ($routeProvider, $httpProvider) {
     $routeProvider
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '#/'
       });
 
     $httpProvider.interceptors.push('authInterceptor');

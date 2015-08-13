@@ -1,9 +1,19 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+var errors = require('./errors');
 
-module.exports = router;
+module.exports = function(app) {
+
+  // Insert routes below
+  app.use('/api/insignia', require('../api/insignia'));
+
+  // All undefined asset or api routes should return a 404
+  app.route('/:url(api|auth|components|app|bower_components|assets)/*')
+   .get(errors[404]);
+
+  // All other routes should redirect to the index.html
+  app.route('/*')
+    .get(function(req, res) {
+      res.sendfile(app.get('appPath') + '/index.html');
+    });
+};
