@@ -1,28 +1,68 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-<div class="col-md-12" data-ng-show="customers.length != 0">
-	<table class="table table-striped table-bordered" id="table1">
-		<thead>
-			<th>Name&nbsp;</th>
-			<th>Last Name&nbsp;</th>
-			<th>Title&nbsp;</th>
-			<th>City&nbsp;</th>
-			<th></th>
-		</thead>
-		<tbody>
-			<tr ng-repeat="data in customers">
-				<td>{{data.FirstName}}</td>
-				<td>{{data.LastName}}</td>
-				<td>{{data.Title}}</td>
-				<td>{{ data.City }}</td>
-				<td>
-					<a href="/edit-customer/{{data.EmployeeID}}" class="btn">&nbsp;
-						<i class="glyphicon glyphicon-edit"></i>&nbsp; Edit	Customer
-					</a>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	
+	<div data-ng-show="customers.length != 0">
+
+	<div class="row">
+      <div class="panel panel-default">
+      
+		<div class="panel-heading">
+          <h4>
+            Fixed Header Scrolling Table 
+          </h4>
+        </div>
+		<table class="table table-fixed">
+			<thead>
+				<th>Nombre&nbsp;</th>
+				<th>Email&nbsp;</th>
+				<th>Correo 2&nbsp;</th>
+				<th>Telefono 1&nbsp;</th>
+				<th>Telefono 2&nbsp;</th>
+				<th>Estado&nbsp;</th>
+				<th>Centro Trabajo&nbsp;</th>
+				<th>Nivel CT&nbsp;</th>
+				<th>Calif. Obt.&nbsp;</th>
+				<th>F. Apertura&nbsp;</th>
+				<th>Total Insg.&nbsp;</th>
+				<th>Bronce&nbsp;</th>
+				<th>Plata&nbsp;</th>
+				<th>Oro&nbsp;</th>
+				<th>Platino&nbsp;</th>
+				<th>Birrete&nbsp;</th>
+				<th>Mouse&nbsp;</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="data in customers">
+					<td>{{ data.id }}</td>
+					<td>{{data.Email}}</td>
+					<td>{{data.Correo2}}</td>
+					<td>{{data.Tel1}}</td>
+					<td>{{ data.Tel2 }}</td>
+					<td>{{data.Estado}}</td>
+					<td>{{data.CentTrab}}</td>
+					<td>{{data.NivelCT}}</td>
+					<td>{{ data.CalifObt }}</td>
+					<td>{{data.FechaApertura}}</td>
+					<td>{{data.tTotal}}</td>
+					<td>{{data.Bronce}}</td>
+					<td>{{ data.Plata }}</td>
+					<td>{{data.Oro}}</td>
+					<td>{{data.Platino}}</td>
+					<td>{{data.Birrete}}</td>
+					<td>{{ data.Mouse }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+
+  
+        
+
+
+      </div>
+  </div>
+
 <br/>
 
-</div>

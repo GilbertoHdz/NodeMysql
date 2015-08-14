@@ -4,11 +4,11 @@
 var mysql = require('mysql'),
 //creamos la conexion a nuestra base de datos con los datos de acceso de cada uno
 connection = mysql.createConnection(
-	{ 
-		host: 'localhost', 
+	{
+		host: 'localhost',
 		user: 'root',  
 		password: '', 
-		database: 'db.northwind'
+		database: 'db.diplomado'
 	}
 );
 
@@ -28,7 +28,7 @@ var insigniaModel = {};
 insigniaModel.getInsignias = function(callback){
 
 	if (connection) {
-		connection.query('SELECT * FROM employees ORDER BY EmployeeID', function(error, rows) {
+		connection.query('SELECT * FROM mdl_user;', function(error, rows) {
 			if(error){
 				throw error;
 			} else {
@@ -52,80 +52,53 @@ insigniaModel.getInsigniaID = function(id, callback){
 	}
 }
  
-//añadir un nuevo usuario
-insigniaModel.insertInsignia = function(userData,callback) {
-	if (connection) 
-	{
-		connection.query('INSERT INTO users SET ?', userData, function(error, result) 
-		{
-			if(error)
-			{
-				throw error;
-			}
-			else
-			{
-				//devolvemos la última id insertada
-				callback(null,{"insertId" : result.insertId});
-			}
-		});
-	}
-}
  
-//actualizar un usuario
-insigniaModel.updateInsignia = function(userData, callback)
-{
-	//console.log(userData); return;
-	if(connection)
-	{
-		var sql = 'UPDATE users SET username = ' + connection.escape(userData.username) + ',' +  
-		'email = ' + connection.escape(userData.email) +
-		'WHERE id = ' + userData.id;
- 
-		connection.query(sql, function(error, result) 
-		{
-			if(error)
-			{
-				throw error;
-			}
-			else
-			{
-				callback(null,{"msg":"success"});
-			}
-		});
-	}
-}
- 
-//eliminar un usuario pasando la id a eliminar
-insigniaModel.deleteInsignia = function(id, callback)
-{
-	if(connection)
-	{
-		var sqlExists = 'SELECT * FROM users WHERE id = ' + connection.escape(id);
-		connection.query(sqlExists, function(err, row) 
-		{
-			//si existe la id del usuario a eliminar
-			if(row)
-			{
-				var sql = 'DELETE FROM users WHERE id = ' + connection.escape(id);
-				connection.query(sql, function(error, result) 
-				{
-					if(error)
-					{
-						throw error;
-					}
-					else
-					{
-						callback(null,{"msg":"deleted"});
-					}
-				});
-			}
-			else
-			{
-				callback(null,{"msg":"notExist"});
-			}
-		});
-	}
-}
  
 //exportamos el objeto para tenerlo disponible en la zona de rutas
 module.exports = insigniaModel;
+
+
+
+function queryAll(){
+	return "SELECT CONCAT(MU.firstname,' ', MU.lastname) AS NomComp, MU.email AS Email " +
+"	, IDC.data AS Correo2, MU.phone1 AS Tel1, MU.phone2 AS Tel2, IDE.data AS Estado, IDCT.data AS CentTrab " +
+"    , IDNV.data AS NivelCT, SUM(MGG.finalgrade *  MGI.aggregationcoef) AS CalifObt " +
+"    , MC.fullname AS Diplomado, FROM_UNIXTIME(MC.startdate) AS FechaApertura, IFNULL(qTotal.total, 0) AS tTotal " +
+"    , IFNULL(qBRONCE.bronce, 'NO') as Bronce, IFNULL(qPLATA.plata, 'NO') as Plata, IFNULL(qORO.oro, 'NO') as Oro " +
+"    , IFNULL(qPLATINO.platino, 'NO') as Platino, IFNULL(qBIRRETE.birrete, 'NO') as Birrete, IFNULL(qMOUSE.mouse, 'NO') as Mouse " +
+"FROM mdl_role  MR " +
+"INNER JOIN mdl_role_assignments MRASS ON (MRASS.roleid = MR.id) " +
+"INNER JOIN mdl_user MU ON (MRASS.userid = MU.id ) " +
+"INNER JOIN mdl_user_info_data IDC ON (IDC.userid = MU.id AND IDC.fieldid = 7) " +
+"INNER JOIN mdl_user_info_data IDE ON (IDE.userid = MU.id AND IDE.fieldid = 10) " +
+"INNER JOIN mdl_user_info_data IDCT ON (MU.id = IDCT.userid AND IDCT.fieldid  = 18) " +
+"INNER JOIN mdl_user_info_data IDNV ON (MU.id = IDNV.userid AND IDNV.fieldid  = 24) " +
+"INNER JOIN mdl_grade_grades MGG ON (MGG.userid = MU.id) " +
+"INNER JOIN mdl_grade_items MGI ON (MGI.id = MGG.itemid) " +
+"INNER JOIN mdl_course MC ON (MC.id = MGI.courseid) " +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS platino, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%platino%') " +
+"	)qPLATINO ON (qPLATINO.userid =mu.id AND qPLATINO.courseid = MC.id ) " +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS oro, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%oro%') " +
+"	)qORO ON (qORO.userid=mu.id AND qORO.courseid = MC.id) " +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS plata, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%plata%') " +
+"	)qPLATA ON (qPLATA.userid =mu.id AND qPLATA.courseid = MC.id) " +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS bronce, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%bronce%') " +
+"	)qBRONCE ON (qBRONCE.userid =mu.id AND qBRONCE.courseid = MC.id)" +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS birrete, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%birrete%') " +
+"	)qBIRRETE ON (qBIRRETE.userid =mu.id AND qBIRRETE.courseid = MC.id) " +
+"LEFT JOIN (SELECT MBI.userid, MB.name AS mouse, MB.courseid FROM mdl_badge_issued MBI " +
+"			INNER JOIN mdl_badge MB ON (MB.id = MBI.badgeid AND MB.name like '%mouse%') " +
+"	)qMOUSE ON (qMOUSE.userid =mu.id AND qMOUSE.courseid = MC.id) " +
+"LEFT JOIN (SELECT MBI.userid, MB.courseid, COUNT(MBI.badgeid) AS total FROM mdl_course MC " +
+"			INNER JOIN mdl_badge MB ON (MB.courseid = MC.id) " +
+"			INNER JOIN  mdl_badge_issued MBI ON (MBI.badgeid = MB.id) " +
+"			GROUP BY MBI.userid " +
+"	)qTotal ON (qTotal.userid =mu.id AND qTotal.courseid = MC.id) " +
+"WHERE MRASS.roleid = 5 AND MGI.itemtype = 'mod' " +
+"GROUP BY MGG.userid ORDER BY MGG.userid;"
+}

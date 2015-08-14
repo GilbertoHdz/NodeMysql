@@ -7,6 +7,7 @@ angular.module('appWeb')
 		$scope.customers = data.data;
 	});
 
+
 }).factory("services", ['$http', function($http) {
 		var serviceBase = '/api/insignia'
 		var obj = {};
